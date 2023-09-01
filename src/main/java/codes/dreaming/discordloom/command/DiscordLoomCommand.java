@@ -62,35 +62,35 @@ public class DiscordLoomCommand {
         long roleId = LongArgumentType.getLong(ctx, "role");
 
         String discordId = LuckPermsProvider.get()
-			.getUserManager()
-			.getUser(player.getUuid())
-			.getNodes(NodeType.META)
-			.stream()
-			.filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
-			.findAny()
-			.orElseThrow()
-			.getMetaValue();
+                .getUserManager()
+                .getUser(player.getUuid())
+                .getNodes(NodeType.META)
+                .stream()
+                .filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
+                .findAny()
+                .orElseThrow()
+                .getMetaValue();
 
         Guild guild = DISCORD_MANAGER.getDiscordGuildFromId(guildId);
 
-        if(guild == null) {
+        if (guild == null) {
             ctx.getSource().sendFeedback(Text.of("§cGuild not found!"), false);
             return 0;
         }
 
         Role role = guild.getRoleById(roleId);
 
-        if(role == null) {
+        if (role == null) {
             ctx.getSource().sendFeedback(Text.of("§cRole not found!"), false);
             return 0;
         }
 
         UserSnowflake userSnowflake = UserSnowflake.fromId(discordId);
 
-        if(add){
+        if (add) {
             guild.addRoleToMember(userSnowflake, role).queue();
 
-        }else{
+        } else {
             guild.removeRoleFromMember(userSnowflake, role).queue();
         }
 
@@ -101,14 +101,14 @@ public class DiscordLoomCommand {
         PlayerEntity player = EntityArgumentType.getPlayer(ctx, "player");
 
         String discordId = LuckPermsProvider.get()
-			.getUserManager()
-			.getUser(player.getUuid())
-			.getNodes(NodeType.META)
-			.stream()
-			.filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
-			.findAny()
-			.orElseThrow()
-			.getMetaValue();
+                .getUserManager()
+                .getUser(player.getUuid())
+                .getNodes(NodeType.META)
+                .stream()
+                .filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
+                .findAny()
+                .orElseThrow()
+                .getMetaValue();
 
         User user = DISCORD_MANAGER.getDiscordUserFromId(discordId);
 
@@ -120,9 +120,9 @@ public class DiscordLoomCommand {
         String username = user.getName();
 
         ctx.getSource().sendFeedback(
-			Text.of("§a" + player.getDisplayName().getString() + " is " + username + " on Discord!"),
-			false
-		);
+                Text.of("§a" + player.getDisplayName().getString() + " is " + username + " on Discord!"),
+                false
+        );
 
         return 1;
     }
@@ -156,9 +156,9 @@ public class DiscordLoomCommand {
         }
 
         ctx.getSource().sendFeedback(
-			Text.of("§aFound " + names.size() + " matches: " + String.join(", ", names)),
-			false
-		);
+                Text.of("§aFound " + names.size() + " matches: " + String.join(", ", names)),
+                false
+        );
 
         return 1;
     }

@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ConnectScreen.class)
 public interface ConnectScreenAccessor {
-	@Invoker(value = "method_19800")
-	void cancel( ButtonWidget widget );
+    @Invoker(value = "method_19800")
+    void cancel(ButtonWidget widget);
 
-	@Accessor
-	Screen getParent();
+    @Accessor
+    Screen getParent();
 }

@@ -4,7 +4,7 @@ import io.wispforest.owo.config.annotation.Config;
 
 import java.util.List;
 
-import static codes.dreaming.discordloom.DiscordLoom.*;
+import static codes.dreaming.discordloom.DiscordLoom.MOD_ID;
 
 @Config(name = MOD_ID + "-server", wrapperName = "ServerConfig")
 public class ConfigModel {

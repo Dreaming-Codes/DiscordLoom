@@ -15,7 +15,7 @@ public class ClientLinkManager {
         return oauthToken;
     }
 
-    public static void setOauthToken( String oauthToken ) {
+    public static void setOauthToken(String oauthToken) {
         ClientLinkManager.oauthToken = oauthToken;
     }
 
@@ -24,10 +24,10 @@ public class ClientLinkManager {
      *
      * @return The port number extracted from the redirect_uri parameter, or null if the URL is null or does not contain a redirect_uri parameter.
      */
-    public static Integer getPortFromOauthURL( @NotNull String url ) {
+    public static Integer getPortFromOauthURL(@NotNull String url) {
         var urlSplit = url.split("&");
-        for ( var section : urlSplit ) {
-            if ( section.contains( "redirect_uri" ) ) {
+        for (var section : urlSplit) {
+            if (section.contains("redirect_uri")) {
                 var redirectSplit = section.split("=");
                 return Integer.parseInt(redirectSplit[redirectSplit.length - 1].split(":")[2].split("/")[0]);
             }
@@ -46,8 +46,8 @@ public class ClientLinkManager {
      *
      * @param serverAddress The server address to be set.
      */
-    public static void setLastServerAddress( ServerAddress serverAddress ) {
-        if ( lastServerAddress != null && !lastServerAddress.equals(serverAddress) )
+    public static void setLastServerAddress(ServerAddress serverAddress) {
+        if (lastServerAddress != null && !lastServerAddress.equals(serverAddress))
             setOauthToken(null);
         lastServerAddress = serverAddress;
     }

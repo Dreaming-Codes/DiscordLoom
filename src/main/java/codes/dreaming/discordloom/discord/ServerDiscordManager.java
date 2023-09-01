@@ -32,16 +32,44 @@ public class ServerDiscordManager {
 
     public ServerDiscordManager() {
         jdaApi = JDABuilder
-			.createDefault( SERVER_CONFIG.discordBotToken(), GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS )
-			.build();
+                .createDefault(SERVER_CONFIG.discordBotToken(), GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS)
+                .build();
 
         jdaApi.addEventListener(new DiscordEventListener());
 
         jdaApi.updateCommands()
-			.addCommands(Commands.context(Command.Type.USER, "Get user minecraft info"))
-			.queue();
+                .addCommands(Commands.context(Command.Type.USER, "Get user minecraft info"))
+                .queue();
 
         restClient = RestClient.create(SERVER_CONFIG.discordBotToken());
+    }
+
+    public static Set<UUID> getPlayersFromDiscordId(String discordId) {
+        Set<UUID> matches;
+
+        try {
+            MetaNode discordIdNode = buildNodeMatcherWithDiscordId(discordId);
+            matches = LuckPermsProvider.get()
+                    .getUserManager()
+                    .searchAll(NodeMatcher.equals(discordIdNode, NodeEqualityPredicate.EXACT))
+                    .get()
+                    .keySet();
+        } catch (Exception e) {
+            return Collections.emptySet();
+        }
+
+        return matches;
+    }
+
+    public static MetaNode buildNodeMatcherWithDiscordId(String discordId) {
+        return MetaNode.builder()
+                .key(LuckPermsMetadataKey)
+                .value(discordId)
+                .build();
+    }
+
+    private static String getDiscordRedirectUri() {
+        return "http://localhost:" + SERVER_CONFIG.discordRedirectUriPort() + "/callback";
     }
 
     public JDA getJdaApi() {
@@ -51,11 +79,11 @@ public class ServerDiscordManager {
     public List<Guild> getMissingGuilds() {
         List<Guild> guilds = jdaApi.getGuilds();
         return SERVER_CONFIG.checkForGuildsOnJoin()
-			.stream()
-			.filter(id -> guilds.stream().noneMatch(guild -> guild.getId().equals(id)))
-			.map(jdaApi::getGuildById)
-			.filter(Objects::nonNull)
-			.collect(Collectors.toList());
+                .stream()
+                .filter(id -> guilds.stream().noneMatch(guild -> guild.getId().equals(id)))
+                .map(jdaApi::getGuildById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Nullable
@@ -74,44 +102,16 @@ public class ServerDiscordManager {
 
     public String doDiscordLink(String code) {
         DiscordOAuth2Client oAuth2Client = DiscordOAuth2Client.createFromCode(
-			restClient,
-			AuthorizationCodeGrantRequest.builder()
-				.code(code)
-				.clientId(SERVER_CONFIG.discordClientId())
-				.clientSecret(SERVER_CONFIG.discordClientSecret())
-				.redirectUri(getDiscordRedirectUri())
-				.build()
-		);
+                restClient,
+                AuthorizationCodeGrantRequest.builder()
+                        .code(code)
+                        .clientId(SERVER_CONFIG.discordClientId())
+                        .clientSecret(SERVER_CONFIG.discordClientSecret())
+                        .redirectUri(getDiscordRedirectUri())
+                        .build()
+        );
         return Objects.requireNonNull(oAuth2Client.getCurrentUser().block())
-			.id()
-			.toString();
-    }
-
-    public static Set<UUID> getPlayersFromDiscordId(String discordId) {
-        Set<UUID> matches;
-
-        try {
-            MetaNode discordIdNode = buildNodeMatcherWithDiscordId(discordId);
-            matches = LuckPermsProvider.get()
-				.getUserManager()
-				.searchAll(NodeMatcher.equals(discordIdNode, NodeEqualityPredicate.EXACT))
-				.get()
-				.keySet();
-        } catch (Exception e) {
-            return Collections.emptySet();
-        }
-
-        return matches;
-    }
-
-    public static MetaNode buildNodeMatcherWithDiscordId(String discordId) {
-        return MetaNode.builder()
-			.key(LuckPermsMetadataKey)
-			.value(discordId)
-			.build();
-    }
-
-    private static String getDiscordRedirectUri() {
-        return "http://localhost:" + SERVER_CONFIG.discordRedirectUriPort() + "/callback";
+                .id()
+                .toString();
     }
 }
