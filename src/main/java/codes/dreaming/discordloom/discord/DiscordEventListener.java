@@ -4,9 +4,6 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.luckperms.api.LuckPermsProvider;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -35,11 +32,13 @@ public class DiscordEventListener extends ListenerAdapter {
         if (event.getChannelLeft() != null && SERVER_CONFIG.mandatoryVCChannels().contains(event.getChannelLeft().getId())) {
             ServerDiscordManager.getPlayersFromDiscordId(event.getEntity().getId()).forEach(uuid -> {
                 ServerPlayerEntity player = PLAYER_MANAGER.getPlayer(uuid);
-                if (player == null) return;
+                if (player == null)
+					return;
 
-                if (Permissions.check(player, MOD_ID + ".bypass_vc")) return;
+                if (Permissions.check(player, MOD_ID + ".bypass_vc"))
+					return;
 
-                LOGGER.info("Kicking player " + uuid + " from server since he left a mandatory VC channel");
+                LOGGER.info("Kicking player {} from server since he left a mandatory VC channel", uuid);
                 player.networkHandler.disconnect(Text.of("You left a mandatory VC channel"));
             });
         }

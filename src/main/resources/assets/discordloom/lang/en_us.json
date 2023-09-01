@@ -1,0 +1,16 @@
+{
+    "screen.discordloom.login.title": "Discord Login Required",
+
+    "text.discordloom.disconnect.profile": "There was an error while trying to fetch your profile, please try again later.",
+    "text.discordloom.disconnect.luckperms": "There was an error while trying to fetch your LuckPerms user, please try again later.",
+    "text.discordloom.disconnect.profile.offline": "There was an error while trying to fetch your Minecraft profile, please make sure your session is valid and try again later.",
+    "text.discordloom.disconnect.relink": "This Discord account is already linked to %s Minecraft account!",
+    "text.discordloom.disconnect.discord": "There was an error while trying to fetch your Discord user, please try again later.",
+    "text.discordloom.disconnect.channel.text": "You are not in the required discord channel to join this server.",
+    "text.discordloom.disconnect.channel.voice": "You are not in a mandatory voice channel to join this server.",
+
+    "text.discordloom.connect.message": "For playing on this server, you need to link your account. Please click on the button bellow to link your account",
+    "text.discordloom.connect.link_button": "Click here to link your account",
+    "text.discordloom.connect.failed": "Error during linking process, manual linking is required contact the server owner",
+    "text.discordloom.connect.browser_clipboard": "If your browser didn't open, paste the link in your clipboard in your browser"
+}

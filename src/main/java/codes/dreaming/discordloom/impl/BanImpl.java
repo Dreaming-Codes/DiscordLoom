@@ -22,18 +22,21 @@ public class BanImpl {
             return;
         }
         applyToDiscordIds(
-                targets,
-                discordId -> SERVER_CONFIG.checkForGuildsOnJoin().forEach(guildId -> {
-                    Guild guild = DISCORD_MANAGER.getDiscordGuildFromId(Long.valueOf(guildId));
-                    if (guild == null) {
-                        return;
-                    }
-                    String finalReason = "Banned by DiscordLoom: " + reason;
-                    if (source != null) {
-                        finalReason += " (" + source + ")";
-                    }
-                    guild.ban(UserSnowflake.fromId(discordId), 0, TimeUnit.SECONDS).reason(finalReason).queue();
-                })
+			targets,
+			discordId -> SERVER_CONFIG.checkForGuildsOnJoin()
+				.forEach(guildId -> {
+					Guild guild = DISCORD_MANAGER.getDiscordGuildFromId(Long.valueOf(guildId));
+					if (guild == null) {
+						return;
+					}
+					String finalReason = "Banned by DiscordLoom: " + reason;
+					if (source != null) {
+						finalReason += " (" + source + ")";
+					}
+					guild.ban(UserSnowflake.fromId(discordId), 0, TimeUnit.SECONDS)
+						.reason(finalReason)
+						.queue();
+				})
         );
     }
 
@@ -42,29 +45,34 @@ public class BanImpl {
             return;
         }
         applyToDiscordIds(
-                targets,
-                discordId -> SERVER_CONFIG.checkForGuildsOnJoin().forEach(guildId -> {
-                    Guild guild = DISCORD_MANAGER.getDiscordGuildFromId(Long.valueOf(guildId));
-                    if (guild == null) {
-                        return;
-                    }
-                    guild.unban(UserSnowflake.fromId(discordId)).queue();
-                })
+			targets,
+			discordId -> SERVER_CONFIG.checkForGuildsOnJoin()
+				.forEach(guildId -> {
+					Guild guild = DISCORD_MANAGER.getDiscordGuildFromId(Long.valueOf(guildId));
+					if (guild == null) {
+						return;
+					}
+					guild.unban(UserSnowflake.fromId(discordId))
+						.queue();
+				})
         );
     }
 
     private static void applyToDiscordIds(Collection<GameProfile> targets, Consumer<String> discordIdAction) {
         targets.stream()
-                .map(GameProfile::getId)
-                .filter(Objects::nonNull)
-                .map(LuckPermsProvider.get().getUserManager()::getUser).filter(Objects::nonNull)
-                .map(user -> user.getNodes(NodeType.META).stream()
-                        .filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
-                        .findAny()
-                        .map(MetaNode::getMetaValue)
-                )
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .forEach(discordIdAction);
+			.map(GameProfile::getId)
+			.filter(Objects::nonNull)
+			.map(LuckPermsProvider.get().getUserManager()::getUser)
+			.filter(Objects::nonNull)
+			.map(user -> user
+				.getNodes(NodeType.META)
+				.stream()
+				.filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
+				.findAny()
+				.map(MetaNode::getMetaValue)
+			)
+			.filter(Optional::isPresent)
+			.map(Optional::get)
+			.forEach(discordIdAction);
     }
 }

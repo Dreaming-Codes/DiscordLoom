@@ -9,13 +9,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static codes.dreaming.discordloom.DiscordLoom.*;
-
 @Mixin(ConnectScreen.class)
 public class ConnectScreenMixin {
-    @Inject(method = "connect(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/network/ServerAddress;)V", at = @At("HEAD"))
+    @Inject(
+		method = "connect(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/network/ServerAddress;)V",
+		at = @At("HEAD")
+	)
     private void getAddress(final MinecraftClient client, final ServerAddress address, CallbackInfo ci) {
-        ClientLinkManager.setServerAddress(address);
+        ClientLinkManager.setLastServerAddress(address);
     }
-
 }

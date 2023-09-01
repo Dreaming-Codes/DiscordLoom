@@ -6,7 +6,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.lucko.fabric.api.permissions.v0.Permissions;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.node.NodeType;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -58,7 +61,15 @@ public class DiscordLoomCommand {
         Long guildId = LongArgumentType.getLong(ctx, "guildId");
         long roleId = LongArgumentType.getLong(ctx, "role");
 
-        String discordId = LuckPermsProvider.get().getUserManager().getUser(player.getUuid()).getNodes(NodeType.META).stream().filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey)).findAny().get().getMetaValue();
+        String discordId = LuckPermsProvider.get()
+			.getUserManager()
+			.getUser(player.getUuid())
+			.getNodes(NodeType.META)
+			.stream()
+			.filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
+			.findAny()
+			.orElseThrow()
+			.getMetaValue();
 
         Guild guild = DISCORD_MANAGER.getDiscordGuildFromId(guildId);
 
@@ -89,7 +100,15 @@ public class DiscordLoomCommand {
     public static int whoisPlayer(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         PlayerEntity player = EntityArgumentType.getPlayer(ctx, "player");
 
-        String discordId = LuckPermsProvider.get().getUserManager().getUser(player.getUuid()).getNodes(NodeType.META).stream().filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey)).findAny().get().getMetaValue();
+        String discordId = LuckPermsProvider.get()
+			.getUserManager()
+			.getUser(player.getUuid())
+			.getNodes(NodeType.META)
+			.stream()
+			.filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
+			.findAny()
+			.orElseThrow()
+			.getMetaValue();
 
         User user = DISCORD_MANAGER.getDiscordUserFromId(discordId);
 
@@ -100,7 +119,10 @@ public class DiscordLoomCommand {
 
         String username = user.getName();
 
-        ctx.getSource().sendFeedback(Text.of("§a" + player.getDisplayName().getString() + " is " + username + " on Discord!"), false);
+        ctx.getSource().sendFeedback(
+			Text.of("§a" + player.getDisplayName().getString() + " is " + username + " on Discord!"),
+			false
+		);
 
         return 1;
     }
@@ -133,7 +155,10 @@ public class DiscordLoomCommand {
             }
         }
 
-        ctx.getSource().sendFeedback(Text.of("§aFound " + names.size() + " matches: " + String.join(", ", names)), false);
+        ctx.getSource().sendFeedback(
+			Text.of("§aFound " + names.size() + " matches: " + String.join(", ", names)),
+			false
+		);
 
         return 1;
     }
