@@ -51,7 +51,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    include(modImplementation('me.lucko:fabric-permissions-api:0.3.1'))
+    include(modImplementation('me.lucko:fabric-permissions-api:0.2-SNAPSHOT'))
     modApi("maven.modrinth:luckperms:v${rootProject.luckperms_version}-fabric")
 
     annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
