@@ -19,6 +19,9 @@ import net.luckperms.api.node.types.MetaNode;
 import reactor.util.annotation.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import static codes.dreaming.discordloom.DiscordLoomServer.LuckPermsMetadataKey;
@@ -29,10 +32,15 @@ public class ServerDiscordManager {
     private final RestClient restClient;
     private final JDA jdaApi;
 
-
     public ServerDiscordManager() {
+        ExecutorService discordExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
+        ScheduledExecutorService discordScheduledExecutor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() - 1);
+
         jdaApi = JDABuilder
                 .createDefault(SERVER_CONFIG.discordBotToken(), GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS)
+                .setCallbackPool(discordExecutor)
+                .setGatewayPool(discordScheduledExecutor)
+                .setRateLimitPool(discordScheduledExecutor)
                 .build();
 
         jdaApi.addEventListener(new DiscordEventListener());
