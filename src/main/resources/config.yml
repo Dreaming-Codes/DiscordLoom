@@ -7,3 +7,4 @@ syncDiscordRolesOnJoin : []
 allowMultipleMinecraftAccountsPerDiscordAccount : false
 mandatoryVCChannels : []
 banDiscordAccount : true
+addDiscordRolesOnJoin: []

@@ -69,6 +69,9 @@ public class ConfigHelper {
     public List<String> getSyncDiscordRolesOnJoin() throws SerializationException {
         return configData.node("syncDiscordRolesOnJoin").getList(String.class,List.of());
     }
+    public List<String> getAddDiscordRolesOnJoin() throws SerializationException {
+        return configData.node("addDiscordRolesOnJoin").getList(String.class,List.of());
+    }
     public boolean getAllowMultipleMinecraftAccountsPerDiscordAccount() {
         return configData.node("allowMultipleMinecraftAccountsPerDiscordAccount").getBoolean(false);
     }
