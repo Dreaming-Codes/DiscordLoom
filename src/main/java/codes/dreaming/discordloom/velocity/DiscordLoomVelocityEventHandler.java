@@ -12,6 +12,7 @@ import com.velocitypowered.api.proxy.Player;
 import discord4j.discordjson.json.AuthorizationCodeGrantRequest;
 import discord4j.oauth2.DiscordOAuth2Client;
 import discord4j.rest.RestClient;
+import eu.pb4.banhammer.impl.config.ConfigManager;
 import io.netty.buffer.Unpooled;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,6 +31,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static codes.dreaming.discordloom.DiscordLoom.MOD_ID;
@@ -40,13 +42,15 @@ public class DiscordLoomVelocityEventHandler {
     private static ConfigHelper config;
     private static JDA jdaApi;
     private static RestClient restClient;
+    private final DiscordLoomVelocity pluginInstance;
     private final HashMap<UUID, CompletableFuture<Void>> playerFutures = new HashMap<>();
 
-    public DiscordLoomVelocityEventHandler(Logger logger, ConfigHelper configHelper, JDA jdaApi, RestClient restClient) {
+    public DiscordLoomVelocityEventHandler(DiscordLoomVelocity pluginInstance, Logger logger, ConfigHelper configHelper, JDA jdaApi, RestClient restClient) {
         DiscordLoomVelocityEventHandler.logger = logger;
         DiscordLoomVelocityEventHandler.config = configHelper;
         DiscordLoomVelocityEventHandler.jdaApi = jdaApi;
         DiscordLoomVelocityEventHandler.restClient = restClient;
+        this.pluginInstance = pluginInstance;
     }
 
     @Subscribe()
@@ -70,6 +74,13 @@ public class DiscordLoomVelocityEventHandler {
                 continuation.resume();
                 return;
             }
+            try {
+                DiscordLoomVelocityEventHandler.config.getCheckForGuildsOnJoin().stream().map(entry -> {
+                    return entry.split(":");
+                }).collect(Collectors.groupingBy(entry -> entry[0], Collectors.mapping(split -> split[1], Collectors.toList()))).forEach((guild, roles) -> {
+                    this.pluginInstance.setRole(player.getUniqueId(), guild, roles);
+                });
+            } catch (SerializationException e) {}
             continuation.resume();
         });
     }

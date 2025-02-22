@@ -45,6 +45,8 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static codes.dreaming.discordloom.DiscordLoom.MOD_ID;
 import static codes.dreaming.discordloom.DiscordLoomServer.LuckPermsMetadataKey;
@@ -113,6 +115,34 @@ public class DiscordLoomVelocity {
             ctx.getSource().sendMessage(Component.text("§cPlayer not found!"));
             return 0;
         }
+    }
+    public boolean setRole(UUID uuid, String guildId, List<String> roles) {
+
+        String discordId = LuckPermsProvider.get()
+                .getUserManager()
+                .getUser(uuid)
+                .getNodes(NodeType.META)
+                .stream()
+                .filter(node -> node.getMetaKey().equals(LuckPermsMetadataKey))
+                .findAny()
+                .orElseThrow()
+                .getMetaValue();
+
+        Guild guild = jdaApi.getGuildById(guildId);
+
+        if (guild == null) {
+            return false;
+        }
+
+        UserSnowflake userSnowflake = UserSnowflake.fromId(discordId);
+
+        roles.stream().map(guild::getRoleById).forEach(role -> {
+            if (role == null) { return; }
+
+            guild.addRoleToMember(userSnowflake, role).queue();
+        });
+
+        return true;
     }
 
     public static int whoisPlayer(CommandContext<CommandSource> ctx) {
@@ -291,7 +321,7 @@ public class DiscordLoomVelocity {
         RestClient restClient = RestClient.create(configHelper.getDiscordBotToken());
         server.getChannelRegistrar().register(QUERY_PACKET_ID);
         server.getChannelRegistrar().register(RELAY_PACKET_ID);
-        server.getEventManager().register(this, new DiscordLoomVelocityEventHandler(logger, configHelper, jdaApi, restClient));
+        server.getEventManager().register(this, new DiscordLoomVelocityEventHandler(this, logger, configHelper, jdaApi, restClient));
         CommandManager commandManager = server.getCommandManager();
         CommandMeta commandMeta = commandManager.metaBuilder("discordloom").plugin(this).build();
         commandManager.register(commandMeta, new BrigadierCommand(discordLoomCommmand()));
